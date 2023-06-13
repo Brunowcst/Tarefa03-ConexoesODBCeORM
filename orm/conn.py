@@ -1,18 +1,17 @@
 import psycopg2
 from decouple import config
-from faker import Faker
-import random
+from generator import createDatas
 
-fake = Faker()
+# fake = Faker()
 
-
-# config = config(".env")
+# Configurações do banco de dados
 NAME = config('DATABASE_NAME')
 USER = config('DATABASE_USER')
 PASSWORD = config('DATABASE_PASS')
 HOST = config('DATABASE_HOST')
 PORT = config('DATABASE_PORT')
 DEBUG = config('DEBUG', cast=bool, default=False)
+
 
 def connect():
     """ Connect to the PostgreSQL database server """
@@ -27,10 +26,18 @@ def connect():
             password=PASSWORD,
             port=PORT
         )
+
+        # Set database connection for models
+        # Funcionario._meta.database = conn
+        # Departamento._meta.database = conn
+
+        # create tables if they don't exist
+        # conn.create_tables([Funcionario, Departamento])
+
         # create a cursor
         cur = conn.cursor()
 
-	    # execute a statement
+        # execute a statement
         print('PostgreSQL database version:')
         cur.execute('SELECT version()')
 
@@ -43,12 +50,13 @@ def connect():
         createDatas(conn, qntInserts)
 
         # Retrieve query results
+        cur.execute('SELECT * FROM funcionario')
         records = cur.fetchall()
         print("Total number of rows:", cur.rowcount)
         for row in records:
             print(row)
 
-	    # close the communication with the PostgreSQL
+        # close the communication with the PostgreSQL
         cur.close()
 
     except (Exception, psycopg2.DatabaseError) as error:
@@ -58,28 +66,9 @@ def connect():
             conn.close()
             print('Database connection closed.')
 
-def createDatas(conn, qntInserts):
-    try:
-        cur = conn.cursor()
-        for i in range(qntInserts):
-            insertFunc(cur)
 
-        conn.commit()
-        print('Dados inseridos com sucesso no banco de dados.')
-
-    except (Exception, psycopg2.DatabaseError) as error:
-        print('Erro ao inserir dados:', error)
-    
-def insertFunc(cur):
-    sexos = ['M', 'F']
-    nome = fake.name()
-    datanasc = fake.date_of_birth(minimum_age=18, maximum_age=60)
-    salario = fake.random_int(min=600, max=9500)
-    depto = fake.random_int(min=1, max=2)
-    sexo = random.choice(sexos)
-    
-    cur.execute("INSERT INTO funcionario (nome, datanasc, salario, depto, sexo) VALUES (%s, %s, %s, %s, %s)", (nome, datanasc, salario, depto, sexo))
-
-if __name__ == '__main__':
+def main():
     connect()
 
+if __name__ == '__main__':
+    main()
