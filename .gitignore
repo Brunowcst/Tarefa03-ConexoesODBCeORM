@@ -1,0 +1,22 @@
+# Virtual environment
+venv/
+env/
+ENV/
+
+# Compiled Python files
+*.pyc
+__pycache__/
+
+# Logs and databases
+*.log
+*.sqlite
+
+# Peewee migration files (if applicable)
+migrations/
+
+# Editor-specific files
+.vscode/
+.idea/
+
+# Miscellaneous
+.DS_Store
