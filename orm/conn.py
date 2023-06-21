@@ -1,8 +1,7 @@
 import psycopg2
 from decouple import config
 from generator import createDatas
-
-# fake = Faker()
+from models import *
 
 # Configurações do banco de dados
 NAME = config('DATABASE_NAME')
@@ -31,6 +30,7 @@ def connect():
         # Funcionario._meta.database = conn
         # Departamento._meta.database = conn
 
+
         # create tables if they don't exist
         # conn.create_tables([Funcionario, Departamento])
 
@@ -47,7 +47,7 @@ def connect():
 
         # Cria os dados
         qntInserts = int(input("Digite a quantidade de dados a serem gerados:"))
-        createDatas(conn, qntInserts)
+        createDatas(qntInserts, cur)
 
         # Retrieve query results
         cur.execute('SELECT * FROM funcionario')
