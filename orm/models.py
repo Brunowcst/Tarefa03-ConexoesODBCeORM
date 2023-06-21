@@ -1,7 +1,7 @@
 from peewee import *
 import psycopg2
 
-db = PostgresqlDatabase('EquipesBD', user='postgres', password='postgres123', host='localhost', port=5432)
+db = PostgresqlDatabase('equipesbd', user='postgres', password='password', host='localhost', port=5432)
 
 class BaseModel(Model):
     class Meta:
@@ -9,9 +9,9 @@ class BaseModel(Model):
 
 class Funcionario(BaseModel):
     codigo = AutoField()
-    nome = CharField(max_length=15, null=False)
+    nome = CharField(max_length=30, null=False)
     sexo = CharField(max_length=1, null=True, default=None)
-    dataNasc = DateField(null=True, default=None)
+    datanasc = DateField(null=True, default=None)
     salario = DecimalField(max_digits=10, decimal_places=2, null=True, default=None)
     supervisor = ForeignKeyField('self', column_name='supervisor', backref='subordinados', null=True, on_delete='CASCADE', on_update='CASCADE')
     depto = DeferredForeignKey('Departamento', column_name='depto',backref='funcionario', null=True, on_delete='CASCADE', on_update='CASCADE')
@@ -21,8 +21,8 @@ class Funcionario(BaseModel):
 
 class Departamento(BaseModel):
     codigo = AutoField()
-    sigla = CharField(max_length=15, null=False, unique=True)
-    descricao = CharField(max_length=25, null=False)
+    sigla = CharField(max_length=50, null=False, unique=True)
+    descricao = CharField(max_length=100, null=False)
     gerente = ForeignKeyField(Funcionario,  column_name='gerente', backref='departamentos', null=True, on_delete='CASCADE', on_update='CASCADE')
 
     class Meta:
